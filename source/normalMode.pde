@@ -1,0 +1,72 @@
+
+
+
+
+public void runNormalGame() {
+  if (flipped == true) {
+    scale(1, -1);
+    translate(0, -height);
+  }
+  drawBackground();
+
+
+  textSize(50);
+  text((int) Math.ceil(totalHeight/150) + " Meters!", width/2- 80, 100);
+  fill(255, 255, 255);
+
+  if (platformsArray.size() < platformCount) {
+    platformsArray.add(new Platform(false));
+  }
+
+  for (int i = 0; i < platformsArray.size(); i++) {
+    if (!platformsArray.get(i).broken) { // if it isnt already broken
+      platformsArray.get(i).drawPlatform();   
+      if (player.checkVelocity() && platformsArray.get(i).checkBounce(player.getCenter(), player.getFeetPos())) {
+        player.hitPlatform();
+      }
+    }
+    if (platformsArray.get(i).getHeight() > height) {
+      if (platformsArray.get(i).superPlatform == true) {
+        platformCount--;
+      };
+      platformsArray.remove(i);
+    };
+  }
+  if ( keyCode == ' ') {
+    player.usePowerup();
+  }
+
+  if (Math.ceil(totalHeight/150) >= 50) {
+    image(portal, width/2-150, portalYPos);
+    portalYPos++;
+    if (dist(player.xPos + (player.characterWidth/2), player.yPos, width/2, portalYPos+150) < 100) {
+      player.xPos = width/2;
+      player.yPos = portalYPos + 150;
+      player.drawCharacter();
+      chaosModeUnlocked = true;
+      delay(500);
+      player = new Character();
+      resetVariables(false);
+      level = -1;
+    }
+  }
+
+
+  player.drawCharacter();
+  player.checkHeight();
+
+
+  pushMatrix();
+  if (flipped == true) {
+    scale(1, -1);
+    translate(0, -height);
+  }
+
+  quitButton.returnHover();
+  image(backArrow, -15, height-100);
+
+  popMatrix();
+  if(player.colourblind){
+      filter(GRAY);
+  }
+}
